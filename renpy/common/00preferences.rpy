@@ -648,7 +648,7 @@ init -1500 python:
                     return ToggleMute(mixer), alt
 
             else:
-                raise Exception("Preference(%r, %r) is unknown." % (name , value))
+                return None
 
         rv = get()
 

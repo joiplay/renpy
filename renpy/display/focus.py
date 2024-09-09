@@ -223,7 +223,10 @@ def set_focused(widget, arg, screen):
     if widget is None:
         new_tooltip = None
     else:
-        new_tooltip = widget._get_tooltip()
+        try:
+            new_tooltip = widget._get_tooltip()
+        except:
+            new_tooltip = None
 
     if tooltip != new_tooltip:
         tooltip = new_tooltip

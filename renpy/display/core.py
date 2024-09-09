@@ -872,6 +872,46 @@ class Interface(object):
         # Is this the first frame?
         self.first_frame = True
 
+        # Used for adding unicode chars to events
+        self.android_key_map = {
+            48:u'0',
+            49:u'1',
+            50:u'2',
+            51:u'3',
+            52:u'4',
+            53:u'5',
+            54:u'6',
+            55:u'7',
+            56:u'8',
+            57:u'9',
+            97:u'a',
+            98:u'b',
+            99:u'c',
+            100:u'd',
+            101:u'e',
+            102:u'f',
+            103:u'g',
+            104:u'h',
+            105:u'i',
+            106:u'j',
+            107:u'k',
+            108:u'l',
+            109:u'm',
+            110:u'n',
+            111:u'o',
+            112:u'p',
+            113:u'q',
+            114:u'r',
+            115:u's',
+            116:u't',
+            117:u'u',
+            118:u'v',
+            119:u'w',
+            120:u'x',
+            121:u'y',
+            122:u'z'
+        }
+
         # Should prediction be forced? This causes the prediction coroutine to
         # be prioritized, and is set to False when it's done, when preloading
         # is done, or at the end of the interaction.
@@ -1201,15 +1241,24 @@ class Interface(object):
         renpy.config.renderer = renderer
 
         if renpy.android or renpy.ios or renpy.emscripten:
-            renderers = [ "gles2" ]
+            renderers = [ "gles" ]
         elif renpy.windows:
-            renderers = [ "gl2", "angle2", "gles2" ]
+            renderers = [ "gl", "angle", "gles" ]
         else:
-            renderers = [ "gl2", "gles2" ]
+            renderers = [ "gl", "gles" ]
+
+        gl2_renderers = [ ]
+
+        for i in [ "gl", "angle", "gles" ]:
+
+            if i in renderers:
+                gl2_renderers.append(i + "2")
+
+        renderers = gl2_renderers + renderers
 
         # Prevent a performance warning if the renderer
         # is taken from old persistent data.
-        if renderer not in renderers:
+        if renderer not in gl2_renderers and (renpy.macintosh or renpy.android or renpy.config.gl2):
             renderer = "auto"
 
         # Software renderer is the last hope for PC .
@@ -1244,6 +1293,10 @@ class Interface(object):
                 renpy.display.log.exception()
 
                 return False
+
+        make_draw("gl", "renpy.gl.gldraw", "GLDraw", "gl")
+        make_draw("angle", "renpy.gl.gldraw", "GLDraw", "angle")
+        make_draw("gles", "renpy.gl.gldraw", "GLDraw", "gles")
 
         make_draw("gl2", "renpy.gl2.gl2draw", "GL2Draw", "gl2")
         make_draw("angle2", "renpy.gl2.gl2draw", "GL2Draw", "angle2")
@@ -1351,6 +1404,7 @@ class Interface(object):
             raise Exception("Could not set video mode.")
 
         renpy.session["renderer"] = draw.info["renderer"]
+        renpy.game.persistent._gl2 = renpy.config.gl2
 
         if renpy.android:
             android.init()
@@ -1730,6 +1784,12 @@ class Interface(object):
 
         else:
             ev = pygame.event.wait()
+
+        softkey_not_visible = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown() 
+
+        if renpy.android and ev.type == pygame.KEYDOWN and softkey_not_visible :
+            if ev.key in self.android_key_map:
+                ev.unicode = self.android_key_map[ev.key]
 
         self.last_event = ev
 
@@ -2827,7 +2887,7 @@ class Interface(object):
                         renpy.game.preferences.fullscreen = False
 
                     if renpy.game.preferences.fullscreen != self.fullscreen:
-                        if renpy.emscripten:
+                        if (not PY2) and renpy.emscripten:
                             if renpy.game.preferences.fullscreen:
                                 emscripten.run_script("setFullscreen(true);")
                             else:
