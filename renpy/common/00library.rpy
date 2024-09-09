@@ -451,8 +451,8 @@ init 1700 python hide:
         if config.debug_sound is None:
             config.debug_sound = True
 
-        renpy.load_module("_developer/developer")
-        renpy.load_module("_developer/inspector")
+    renpy.load_module("_developer/developer")
+    renpy.load_module("_developer/inspector")
 
     if config.window_title is None:
         config.window_title = config.name or "A Ren'Py Game"
@@ -465,9 +465,6 @@ label _renpy_return:
 # Entry point for the developer screen. The rest of it is loaded from
 # _developer.rpym
 label _developer:
-
-    if not config.developer:
-        return
 
     $ _enter_menu()
 

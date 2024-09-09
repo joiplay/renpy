@@ -156,8 +156,12 @@ init -1500 python in _console:
                 s = s[:i] + self._ellipsis + s[len(s) - i:]
             return s
 
-        repr_bytes = _repr_bytes
-        repr_str = _repr_string
+        if PY2:
+            repr_str = _repr_bytes
+            repr_unicode = _repr_string
+        else:
+            repr_bytes = _repr_bytes
+            repr_str = _repr_string
 
         def repr_tuple(self, x, level):
             if not x: return "()"
@@ -208,7 +212,7 @@ init -1500 python in _console:
 
             if level <= 0: return "{...}"
 
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=False)
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=PY2)
             iter_x = self._make_pretty_items(x, iter_keys, '{', '}')
             return self._repr_iterable(iter_x, level, '{', '}')
 
@@ -223,7 +227,7 @@ init -1500 python in _console:
 
             if level <= 0: return left + "...})"
 
-            iter_keys = self._to_shorted_list(x, self.maxdict, sort=False)
+            iter_keys = self._to_shorted_list(x, self.maxdict, sort=PY2)
             iter_x = self._make_pretty_items(x, iter_keys, left, '})')
             return self._repr_iterable(iter_x, level, left, '})')
 
@@ -457,18 +461,12 @@ init -1500 python in _console:
     stdio_lines = _list()
 
     def stdout_line(l):
-        if not (config.console or config.developer):
-            return
-
         stdio_lines.append((False, l))
 
         while len(stdio_lines) > config.console_history_lines:
             stdio_lines.pop(0)
 
     def stderr_line(l):
-        if not (config.console or config.developer):
-            return
-
         stdio_lines.append((True, l))
 
         while len(stdio_lines) > config.console_history_lines:
@@ -777,8 +775,7 @@ init -1500 python in _console:
 # Has to run after 00library.
 init 1701 python in _console:
 
-    if config.developer or config.console:
-        console = DebugConsole()
+    console = DebugConsole()
 
 init -1500 python in _console:
 
