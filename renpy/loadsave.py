@@ -41,7 +41,8 @@ import time
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import PROTOCOL, dump, loads
+import pickle
+from renpy.compat.pickle import PROTOCOL, dump, dumps, loads
 
 
 # This is used as a quick and dirty way of versioning savegame
@@ -82,10 +83,16 @@ def save_dump(roots, log):
 
         elif isinstance(o, types.MethodType):
 
-            o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
+            if PY2:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__func__.__name__) # type: ignore
+            else:
+                o_repr = "<method {0}.{1}>".format(o.__self__.__class__.__name__, o.__name__)
 
         elif isinstance(o, types.FunctionType):
-            name = o.__qualname__ or o.__name__
+            if PY2:
+                name = o.__name__
+            else:
+                name = o.__qualname__ or o.__name__
 
             o_repr = o.__module__ + '.' + name
 

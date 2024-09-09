@@ -566,13 +566,6 @@ def group_logical_lines(lines):
 
         return rv, i
 
-    if lines:
-
-        filename, number, text = lines[0]
-
-        if depth_split(text)[0] != 0:
-            raise ParseError(filename, number, "Unexpected indentation at start of file.")
-
     return gll_core(0, 0)[0]
 
 
