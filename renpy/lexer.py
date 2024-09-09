@@ -303,6 +303,12 @@ def list_logical_lines(filename, filedata=None, linenumber=1, add_lines=False):
     filename = elide_filename(filename)
     prefix = munge_filename(filename)
 
+    # Apply patches
+    for i in renpy.config.patch_list:
+        if(i['key'] in data):
+            print("Found "+i['key'])
+            data = data.replace(i['key'], i['value'])
+
     # Add some newlines, to fix lousy editors.
     data += "\n\n"
 
