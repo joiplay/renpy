@@ -229,12 +229,12 @@ def choose_variants():
         diag = math.hypot(info.current_w, info.current_h) / android.get_dpi() # type: ignore
         print("Screen diagonal is", diag, "inches.")
 
-        if diag >= 6:
+        if os.environ.get("JOIPLAY_VARIANT_PHONE","0") == "1":
+             renpy.config.variants.insert(0, 'phone') # type: ignore
+             renpy.config.variants.insert(0, 'small') # type: ignore
+        else:
             renpy.config.variants.insert(0, 'tablet') # type: ignore
             renpy.config.variants.insert(0, 'medium') # type: ignore
-        else:
-            renpy.config.variants.insert(0, 'phone') # type: ignore
-            renpy.config.variants.insert(0, 'small') # type: ignore
 
     elif renpy.ios:
         renpy.config.variants.insert(0, 'mobile') # type: ignore
@@ -361,6 +361,17 @@ def main():
     game.basepath = renpy.config.gamedir
     renpy.config.commondir = renpy.__main__.path_to_common(renpy.config.renpy_base) # E1101 @UndefinedVariable
     renpy.config.searchpath = renpy.__main__.predefined_searchpath(renpy.config.commondir) # E1101 @UndefinedVariable
+
+    if "ANDROID_PUBLIC" in os.environ:
+        basedir = os.environ['ANDROID_PUBLIC']
+        android_game = os.path.join(os.environ["ANDROID_PUBLIC"], "game")
+
+        if os.path.exists(android_game):
+            renpy.config.searchpath.insert(0, android_game)
+            sys.path.append(android_game)
+            renpy.config.gamedir = android_game
+            renpy.config.basedir = basedir
+
 
     # Load Ren'Py extensions.
     for dir in [ renpy.config.renpy_base ] + renpy.config.searchpath: # @ReservedAssignment
@@ -490,6 +501,8 @@ def main():
     if renpy.game.args.savedir: # type: ignore
         renpy.config.savedir = renpy.game.args.savedir # type: ignore
 
+    renpy.config.savedir = os.environ.get("JOIPLAY_SAVEDIR", renpy.config.savedir)
+
     # Init the save token system.
     renpy.savetoken.init()
 
@@ -590,6 +603,20 @@ def main():
         # may have changed.
         renpy.loader.index_archives()
         log_clock("Index archives")
+
+        if os.environ.get("JOIPLAY_AUTOSAVE","0") == "1":
+            print("Autosave is enabled")
+            renpy.config.autosave_on_choice = True
+        else:
+            print("Autosave is disabled")
+            renpy.config.autosave_on_choice = False
+
+        if os.environ.get("JOIPLAY_HW_VIDEO","1") == "1":
+            print("hw_video is enabled")
+            renpy.config.hw_video = True
+        else:
+            print("hw_video is disabled")
+            renpy.config.hw_video = False
 
         # Check some environment variables.
         renpy.game.less_memory = "RENPY_LESS_MEMORY" in os.environ
