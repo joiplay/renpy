@@ -1409,6 +1409,8 @@ linear_fades = False
 
 # Classes that used to participate in rollback, but no longer do.
 ex_rollback_classes = [ ]
+# Patches
+patch_list = []
 
 # Should we revert to the old behavior of box_reverse?
 simple_box_reverse = False
