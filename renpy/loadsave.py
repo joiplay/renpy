@@ -41,7 +41,8 @@ import time
 import renpy
 from json import dumps as json_dumps
 
-from renpy.compat.pickle import PROTOCOL, dump, loads
+import pickle
+from renpy.compat.pickle import PROTOCOL, dump, dumps, loads
 
 
 # This is used as a quick and dirty way of versioning savegame

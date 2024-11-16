@@ -872,6 +872,46 @@ class Interface(object):
         # Is this the first frame?
         self.first_frame = True
 
+        # Used for adding unicode chars to events
+        self.android_key_map = {
+            48:u'0',
+            49:u'1',
+            50:u'2',
+            51:u'3',
+            52:u'4',
+            53:u'5',
+            54:u'6',
+            55:u'7',
+            56:u'8',
+            57:u'9',
+            97:u'a',
+            98:u'b',
+            99:u'c',
+            100:u'd',
+            101:u'e',
+            102:u'f',
+            103:u'g',
+            104:u'h',
+            105:u'i',
+            106:u'j',
+            107:u'k',
+            108:u'l',
+            109:u'm',
+            110:u'n',
+            111:u'o',
+            112:u'p',
+            113:u'q',
+            114:u'r',
+            115:u's',
+            116:u't',
+            117:u'u',
+            118:u'v',
+            119:u'w',
+            120:u'x',
+            121:u'y',
+            122:u'z'
+        }
+
         # Should prediction be forced? This causes the prediction coroutine to
         # be prioritized, and is set to False when it's done, when preloading
         # is done, or at the end of the interaction.
@@ -1744,6 +1784,10 @@ class Interface(object):
 
         else:
             ev = pygame.event.wait()
+
+        if renpy.android and ev.type == pygame.KEYDOWN and softkey_not_visible :
+            if ev.key in self.android_key_map:
+                ev.unicode = self.android_key_map[ev.key]
 
         self.last_event = ev
 

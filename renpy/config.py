@@ -609,6 +609,8 @@ gestures = {
     "n_e_s_w" : "progress_screen",
     "ne_se" : "accessibility",
     "nw_sw" : "accessibility",
+    "n" : "hide_windows",
+    "w" : "game_menu",
     }
 
 # Sizes of gesture components and strokes, as a fraction of screen_width.
@@ -1502,6 +1504,9 @@ interface_layer = "screens"
 
 # Should Transform crop be limited to the width and height of the image being cropped?
 limit_transform_crop = False
+
+#A certain game needs this
+developer_show_all_exceptions = False
 
 
 
