@@ -47,7 +47,7 @@ init -1600 python:
         reload_game = [ 'alt_K_r', 'shift_K_r' ],
         inspector = [ 'alt_noshift_K_i', 'shift_K_i' ],
         full_inspector = [ 'alt_shift_K_i' ],
-        developer = [ 'alt_K_d', 'shift_K_d', ],
+        developer = [ 'alt_K_d', 'shift_K_d', 'K_HOME'],
         quit = [ ],
         iconify = [ ],
         help = [ 'K_F1', 'meta_shift_/' ],
@@ -377,9 +377,6 @@ init -1600 python:
         renpy.launch_editor([ filename ], line)
 
     def _developer():
-
-        if not config.developer:
-            return
 
         renpy.show_screen("_developer")
         renpy.restart_interaction()
