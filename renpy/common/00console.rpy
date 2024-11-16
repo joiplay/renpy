@@ -461,18 +461,12 @@ init -1500 python in _console:
     stdio_lines = _list()
 
     def stdout_line(l):
-        if not (config.console or config.developer):
-            return
-
         stdio_lines.append((False, l))
 
         while len(stdio_lines) > config.console_history_lines:
             stdio_lines.pop(0)
 
     def stderr_line(l):
-        if not (config.console or config.developer):
-            return
-
         stdio_lines.append((True, l))
 
         while len(stdio_lines) > config.console_history_lines:
@@ -781,8 +775,7 @@ init -1500 python in _console:
 # Has to run after 00library.
 init 1701 python in _console:
 
-    if config.developer or config.console:
-        console = DebugConsole()
+    console = DebugConsole()
 
 init -1500 python in _console:
 
