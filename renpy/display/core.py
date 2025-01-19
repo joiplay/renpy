@@ -1784,6 +1784,8 @@ class Interface(object):
 
         else:
             ev = pygame.event.wait()
+        
+        softkey_not_visible = pygame.key.has_screen_keyboard_support() and not pygame.key.is_screen_keyboard_shown()
 
         if renpy.android and ev.type == pygame.KEYDOWN and softkey_not_visible :
             if ev.key in self.android_key_map:
